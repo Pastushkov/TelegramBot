@@ -31,6 +31,11 @@
                 "name": "DB_USER",
                 "value": "postgres",
                 "type": "str"
+            },
+            {
+                "name": "TELEGRAM_BOT_TOKEN",
+                "value": "7834586628:AAEh-jKNTXX69WkUVUd_wvSLPdpAWWir_gY",
+                "type": "str"
             }
         ]
     },
@@ -38,12 +43,12 @@
         "id": "d5cabf4b2c23ec4a",
         "type": "postgreSQLConfig",
         "name": "",
-        "host": "DB_HOST",
-        "hostFieldType": "global",
-        "port": "DB_PORT",
-        "portFieldType": "global",
-        "database": "DB_NAME",
-        "databaseFieldType": "global",
+        "host": "127.0.0.1",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "postgres",
+        "databaseFieldType": "str",
         "ssl": "false",
         "sslFieldType": "bool",
         "applicationName": "",
@@ -54,10 +59,10 @@
         "idleFieldType": "num",
         "connectionTimeout": "10000",
         "connectionTimeoutFieldType": "num",
-        "user": "DB_USER",
-        "userFieldType": "global",
-        "password": "DB_PASSWORD",
-        "passwordFieldType": "global"
+        "user": "postgres",
+        "userFieldType": "str",
+        "password": "root",
+        "passwordFieldType": "str"
     },
     {
         "id": "37673e3edbd2b95e",
@@ -89,10 +94,11 @@
         "finalize": "",
         "libs": [],
         "x": 730,
-        "y": 900,
+        "y": 880,
         "wires": [
             [
-                "558c3ea363bc48de"
+                "558c3ea363bc48de",
+                "24f340e598200202"
             ]
         ]
     },
@@ -106,8 +112,8 @@
         "split": false,
         "rowsPerMsg": 1,
         "outputs": 1,
-        "x": 330,
-        "y": 560,
+        "x": 490,
+        "y": 480,
         "wires": [
             []
         ]
@@ -116,18 +122,55 @@
         "id": "41ee4f2232975705",
         "type": "inject",
         "z": "991b217375f5a9f2",
-        "name": "OnStart",
+        "name": "",
         "props": [],
         "repeat": "",
         "crontab": "",
         "once": true,
         "onceDelay": 0.1,
         "topic": "",
-        "x": 160,
-        "y": 560,
+        "x": 330,
+        "y": 480,
         "wires": [
             [
                 "9c88fe90e9584492"
+            ]
+        ]
+    },
+    {
+        "id": "cff21104d99fd0dc",
+        "type": "function",
+        "z": "991b217375f5a9f2",
+        "name": "function 2",
+        "func": "flow.keys().forEach(function(key) {\n    // Очищаємо значення для кожного ключа\n    flow.set(key, null);\n});\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0b1637a48fb449fe",
+        "type": "inject",
+        "z": "991b217375f5a9f2",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 100,
+        "y": 680,
+        "wires": [
+            [
+                "cff21104d99fd0dc"
             ]
         ]
     },
@@ -141,8 +184,8 @@
         "split": false,
         "rowsPerMsg": 1,
         "outputs": 1,
-        "x": 450,
-        "y": 980,
+        "x": 270,
+        "y": 1040,
         "wires": [
             [
                 "dbff1d8971508706"
@@ -154,7 +197,7 @@
         "type": "function",
         "z": "991b217375f5a9f2",
         "name": "Get user by chat_id",
-        "func": "const telegramToken = global.get('TELEGRAM_BOT_TOKEN');\nmsg.token = telegramToken;\n\nconst chat_id = msg.payload.message.chat.id;\nconst text = msg.payload.message.text;\nmsg.userData = {\n    chat_id,\n    text\n};\nmsg.params = [chat_id]\nreturn msg;",
+        "func": "const chat_id = msg.payload.message.chat.id;\nconst text = msg.payload.message.text;\nmsg.userData = {\n    chat_id,\n    text\n};\nmsg.params = [chat_id]\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -279,7 +322,7 @@
         "method": "POST",
         "ret": "txt",
         "paytoqs": "ignore",
-        "url": "https://api.telegram.org/bot{{{token}}}/sendMessage",
+        "url": "https://api.telegram.org/bot7834586628:AAEh-jKNTXX69WkUVUd_wvSLPdpAWWir_gY/sendMessage",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -337,7 +380,7 @@
         "id": "42fe6d8e714ff047",
         "type": "switch",
         "z": "991b217375f5a9f2",
-        "name": "Switch reg step",
+        "name": "",
         "property": "payload.registration_step",
         "propertyType": "msg",
         "rules": [
@@ -363,7 +406,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 4,
-        "x": 680,
+        "x": 670,
         "y": 540,
         "wires": [
             [
@@ -540,7 +583,7 @@
         "id": "558c3ea363bc48de",
         "type": "switch",
         "z": "991b217375f5a9f2",
-        "name": "Swith command",
+        "name": "",
         "property": "payload.command",
         "propertyType": "msg",
         "rules": [
@@ -576,8 +619,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 6,
-        "x": 920,
-        "y": 900,
+        "x": 930,
+        "y": 940,
         "wires": [
             [
                 "42fe6d8e714ff047"
@@ -643,7 +686,7 @@
         "type": "function",
         "z": "991b217375f5a9f2",
         "name": "Prepare contacts result ",
-        "func": "const { chat_id } = msg.userData;\n\nif (!msg.payload || msg.payload.length === 0) {\n    msg.payload = {\n        chat_id,\n        text: \"You don't have contacts yet. To add new contact use command /add_contact\"\n    }\n    return msg;\n}\n\nconst messages = msg.payload.map(({ contact_name, phone, birthday }) => {\n    const formatedBirthday = new Date(birthday).toLocaleDateString('uk-UA', {\n        day: '2-digit',\n        month: '2-digit',\n        year: 'numeric'\n    })\n    return `${contact_name} \\t| ${phone} |\\t ${formatedBirthday}`;\n})\n\nmsg.payload = {\n    chat_id,\n    text: messages.join(\"\\n\")\n}\n\nconsole.log(msg.token)\n\nreturn msg;",
+        "func": "const { chat_id } = msg.userData;\n\nif (!msg.payload || msg.payload.length === 0) {\n    msg.payload = {\n        chat_id,\n        text: \"You don't have contacts yet. To add new contact use command /add_contact\"\n    }\n    return msg;\n}\n\nconst messages = msg.payload.map(({ contact_name, phone, birthday }) => {\n    const formatedBirthday = new Date(birthday).toLocaleDateString('uk-UA', {\n        day: '2-digit',\n        month: '2-digit',\n        year: 'numeric'\n    })\n    return `${contact_name} \\t| ${phone} |\\t ${formatedBirthday}`;\n})\n\nmsg.payload = {\n    chat_id,\n    text: messages.join(\"\\n\")\n}\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -657,6 +700,22 @@
                 "badae4d6eadfd206"
             ]
         ]
+    },
+    {
+        "id": "24f340e598200202",
+        "type": "debug",
+        "z": "991b217375f5a9f2",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 740,
+        "wires": []
     },
     {
         "id": "958f65d6cc7f8927",
@@ -693,7 +752,7 @@
         "id": "800f0ee523627826",
         "type": "switch",
         "z": "991b217375f5a9f2",
-        "name": "Switch contact step",
+        "name": "",
         "property": "userData.contact_step",
         "propertyType": "msg",
         "rules": [
@@ -719,7 +778,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 4,
-        "x": 1170,
+        "x": 1150,
         "y": 980,
         "wires": [
             [
@@ -746,8 +805,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1370,
-        "y": 920,
+        "x": 1310,
+        "y": 940,
         "wires": [
             [
                 "badae4d6eadfd206"
@@ -762,7 +821,7 @@
         "method": "POST",
         "ret": "txt",
         "paytoqs": "ignore",
-        "url": "https://api.telegram.org/bot{{{token}}}/sendMessage",
+        "url": "https://api.telegram.org/bot$(TELEGRAM_BOT_TOKEN)/sendMessage",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -790,8 +849,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1390,
-        "y": 960,
+        "x": 1310,
+        "y": 980,
         "wires": [
             [
                 "badae4d6eadfd206"
@@ -810,8 +869,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1370,
-        "y": 1000,
+        "x": 1310,
+        "y": 1020,
         "wires": [
             [
                 "c994141ed451f800"
@@ -828,8 +887,8 @@
         "split": false,
         "rowsPerMsg": 1,
         "outputs": 1,
-        "x": 1570,
-        "y": 1000,
+        "x": 1540,
+        "y": 1020,
         "wires": [
             [
                 "8ce466af8782cf4c"
@@ -840,16 +899,16 @@
         "id": "8ce466af8782cf4c",
         "type": "function",
         "z": "991b217375f5a9f2",
-        "name": "Contact Created",
-        "func": "const { chat_id } = msg.userData;\n\nconst contact = msg.payload[0];\n\nmsg.payload = {\n    chat_id,\n    text: `Contact ${contact.contact_name} added`\n}\nreturn msg;",
+        "name": "function 3",
+        "func": "const {chat_id} = msg.userData;\n\nconst contact = msg.payload[0];\n\nmsg.payload = {\nchat_id,\ntext: `Contact ${contact.contact_name} added`\n}\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1760,
-        "y": 1000,
+        "x": 1720,
+        "y": 1020,
         "wires": [
             [
                 "badae4d6eadfd206"
@@ -991,7 +1050,7 @@
         "method": "POST",
         "ret": "txt",
         "paytoqs": "ignore",
-        "url": "https://api.telegram.org/bot{{{token}}}/sendMessage",
+        "url": "https://api.telegram.org/bot7834586628:AAEh-jKNTXX69WkUVUd_wvSLPdpAWWir_gY/sendMessage",
         "tls": "",
         "persist": false,
         "proxy": "",
